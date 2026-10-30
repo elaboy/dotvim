@@ -1,0 +1,5 @@
+# Vim scripts and shell scripts must be LF: a CRLF vimrc breaks on Linux.
+* text=auto eol=lf
+# cmd.exe needs CRLF to find batch labels reliably.
+*.cmd text eol=crlf
+*.bat text eol=crlf
