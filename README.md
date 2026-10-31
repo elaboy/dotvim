@@ -140,3 +140,23 @@ fallback/compiler/    copies of newer Vim's compilers, used only on old Vims
 ```
 
 Swap, backup and undo files go to `~/.vim-data/`, not next to your code.
+
+## Colors and highlighting
+
+dotvim uses Vim's built-in **catppuccin** color scheme (falling back to
+`habamax` on older Vims) with 24-bit color where the terminal supports it.
+Of Vim's built-in schemes, catppuccin gives the most kinds of code their own
+color. Try others with `:colorscheme` followed by a space, and run
+`:set background=light` on a light terminal.
+
+On top of Vim's own syntax files, `after/syntax/` adds:
+
+- **C#:** type names (`IReadOnlyList<T>`, `Path.Combine`, `catch (IOException)`, `x is Foo`) and method calls, using C#'s naming conventions through the `csUser*` hooks Vim's C# syntax provides
+- **Python:** calls, class names and `self`
+- **PowerShell:** method calls, properties and `[Attributes()]`
+- **SQL:** the PostgreSQL vocabulary the Oracle dialect lacks (`UUID`, `JSONB`, `RETURNING`, `ILIKE`, `::casts`, `$1`, `->>`), plus PL/SQL bits (`:=`, `SQL%ROWCOUNT`, `DBMS_` packages)
+- **JavaScript:** highlighted with Vim's TypeScript rules, which cover modern JS far better
+- **Markdown:** fenced code blocks (```` ```csharp ````) are highlighted in their language
+
+These are pattern rules, not a compiler: they can't tell a local variable
+from a field, but they don't need anything installed.

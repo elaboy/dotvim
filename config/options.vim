@@ -17,6 +17,27 @@ if has('gui_running') && has('win32')
   set guifont=Consolas:h11
 endif
 
+" ---- Colours ----------------------------------------------------------------
+" 24-bit colour where the terminal supports it (Windows Terminal, mintty,
+" VS Code, most Linux terminals); otherwise Vim stays on 256 colours.
+if has('termguicolors') && ($COLORTERM =~# 'truecolor\|24bit' || !empty($WT_SESSION)
+      \ || $TERM_PROGRAM =~# 'mintty\|vscode\|WezTerm\|iTerm' || has('vcon'))
+  " Windows Vim refuses (E954) when not attached to a real console.
+  try
+    set termguicolors
+  catch /E954/
+  endtry
+endif
+" A dark terminal is assumed; on a light one change this to 'light'.
+set background=dark
+" catppuccin (Vim 9.2) tells the most kinds of code apart of Vim's built-in
+" schemes; habamax (Vim 9.0) is the fallback. Try others: :colorscheme <Tab>
+try
+  colorscheme catppuccin
+catch
+  silent! colorscheme habamax
+endtry
+
 " ---- Editing ----------------------------------------------------------------
 set hidden                  " switch buffers without saving first
 set backspace=indent,eol,start
@@ -78,3 +99,7 @@ silent! packadd! matchit       " % jumps between if/else, #region/#endregion...
 " ---- Language switches read by Vim's own syntax/ftplugin files --------------
 let g:is_bash = 1                       " .sh files are bash, not POSIX sh
 let g:ftplugin_sql_omni_key = '<C-j>'   " stock SQL plugin steals Ctrl-C otherwise
+" Highlight fenced code blocks in Markdown (```csharp ... ```).
+let g:markdown_fenced_languages = ['cs', 'csharp=cs', 'python', 'sql', 'typescript',
+      \ 'ts=typescript', 'javascript', 'js=javascript', 'sh', 'bash=sh',
+      \ 'ps1', 'powershell=ps1', 'yaml', 'json', 'dockerfile']
