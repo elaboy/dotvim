@@ -35,7 +35,7 @@ is the stock command each shortcut types, which works on any Vim.
 ### Files and buffers
 | Keys | What it does | Stock Vim |
 |---|---|---|
-| `Space f` | find a file by name; Tab completes, `*` is a wildcard | `:find name` |
+| `Space f` | find a file: matches pop up as you type (fuzzy: `crshlg` finds `CrashLog.cs`), `Enter` opens the top one, `Tab`/arrows pick another | `:find name` |
 | `Space b` | list open files, type a number or part of a name | `:ls` then `:b name` |
 | `Ctrl-^` | jump back to the previous file | |
 | `gf` | open the file whose name is under the cursor | |
@@ -43,6 +43,7 @@ is the stock command each shortcut types, which works on any Vim.
 
 Start Vim from the project's root folder: `:find` searches everything below it,
 skipping `bin/`, `obj/`, `.git/`, `node_modules/`, `dist/` and `.venv/`.
+Every `:` command gets the same live popup (`:b`, `:e`, `:set`...). `Up`/`Down` still walk your command history. This needs Vim 9.1.1576 or newer; older Vims use `Tab` to complete.
 
 ### Build, lint and errors
 | Keys | What it does | Stock Vim |

@@ -13,6 +13,56 @@ set wildignore+=*/.git/*,*/bin/*,*/obj/*,*/node_modules/*,*/dist/*
 set wildignore+=*/__pycache__/*,*/.venv/*,*/venv/*,*/.vs/*
 set wildignore+=*.dll,*.exe,*.pdb,*.nupkg,*.pyc,*.min.js,tags
 
+" ---- Live, fuzzy command line (Vim 9.1.1576+; older Vims keep Tab above) ----
+" Suggestions pop up as you type any : command. For :find they are fuzzy file
+" matches ('crshlg' finds CrashLog.cs), and Enter opens the top one unless you
+" picked another with Tab or the arrow keys. Recipe from :help fuzzy-file-picker.
+if exists('*wildtrigger') && exists('+findfunc') && exists('*cmdcomplete_info')
+      \ && exists('##CmdlineLeavePre')
+  set wildmode=noselect:lastused,full
+  set wildoptions=pum
+  set findfunc=DotvimFind
+
+  " Up/Down still walk command history while the popup is open.
+  cnoremap <expr> <Up>   wildmenumode() ? "\<C-E>\<Up>"   : "\<Up>"
+  cnoremap <expr> <Down> wildmenumode() ? "\<C-E>\<Down>" : "\<Down>"
+
+  augroup dotvim_live_cmdline
+    autocmd!
+    autocmd CmdlineChanged  : call wildtrigger()
+    autocmd CmdlineEnter    : let s:files = []
+    autocmd CmdlineLeavePre : call s:FindTopMatch()
+  augroup END
+endif
+
+let s:files = []
+" The file list is read once per : command line. In a git repo it comes from
+" git (fast, and skips whatever .gitignore skips); elsewhere from a folder
+" walk that skips 'wildignore'.
+function! DotvimFind(arg, cmdcomplete) abort
+  if empty(s:files)
+    if executable('git') && (!empty(finddir('.git', '.;')) || !empty(findfile('.git', '.;')))
+      let s:files = systemlist('git ls-files --cached --others --exclude-standard')
+      if v:shell_error
+        let s:files = []
+      endif
+    endif
+    if empty(s:files)
+      let s:files = filter(globpath('.', '**', 0, 1), '!isdirectory(v:val)')
+      call map(s:files, "fnamemodify(v:val, ':.')")
+    endif
+  endif
+  return a:arg ==# '' ? s:files : matchfuzzy(s:files, a:arg)
+endfunction
+
+function! s:FindTopMatch() abort
+  let l:info = cmdcomplete_info()
+  if getcmdline() =~# '^\s*fin\%[d]\s' && get(l:info, 'matches', []) != []
+        \ && l:info.selected == -1
+    call setcmdline('find ' . fnameescape(l:info.matches[0]))
+  endif
+endfunction
+
 " ---- :grep — search text across the project ---------------------------------
 " Fastest available tool wins: ripgrep, then git grep, then Vim's own vimgrep.
 if executable('rg')
