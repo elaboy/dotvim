@@ -147,7 +147,9 @@ dotvim uses Vim's built-in **catppuccin** color scheme (falling back to
 `habamax` on older Vims) with 24-bit color where the terminal supports it.
 Of Vim's built-in schemes, catppuccin gives the most kinds of code their own
 color. Try others with `:colorscheme` followed by a space, and run
-`:set background=light` on a light terminal.
+`:set background=light` on a light terminal. On a dark background every scheme
+gets a pure black background; delete the `BlackBackground` lines in
+`config/options.vim` to get each scheme's own background back.
 
 On top of Vim's own syntax files, `after/syntax/` adds:
 

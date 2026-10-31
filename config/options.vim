@@ -30,6 +30,19 @@ if has('termguicolors') && ($COLORTERM =~# 'truecolor\|24bit' || !empty($WT_SESS
 endif
 " A dark terminal is assumed; on a light one change this to 'light'.
 set background=dark
+" Pure black background, whichever colour scheme is loaded. Delete these
+" lines to get each scheme's own background back.
+function! s:BlackBackground() abort
+  if &background ==# 'dark'
+    for l:group in ['Normal', 'NonText', 'EndOfBuffer', 'LineNr', 'SignColumn', 'FoldColumn']
+      execute 'highlight' l:group 'guibg=#000000 ctermbg=16'
+    endfor
+  endif
+endfunction
+augroup dotvim_black_background
+  autocmd!
+  autocmd ColorScheme * call s:BlackBackground()
+augroup END
 " catppuccin (Vim 9.2) tells the most kinds of code apart of Vim's built-in
 " schemes; habamax (Vim 9.0) is the fallback. Try others: :colorscheme <Tab>
 try
